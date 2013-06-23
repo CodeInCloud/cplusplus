@@ -1,0 +1,27 @@
+c++问题，定义的函数void f(int m,int n)里面，有int *p=new int[m][n];然后编译通不过。
+2011-04-16 10:38 山村老妖啊 | 分类：C/C++
+
+请问这什么原因，我把它改成int *p=new int[m*n];可以通过，但我要的是一个二维数组啊
+
+2011-04-16 11:34 提问者采纳
+
+C++的动态数组能“动”的只有其中一维，如果你非要new出个动态二维来，有三种方案：
+1、固定第二维：
+int(*p)[20]=new int[m][20];
+用完后delete[] p;
+2、分步分配：
+int**p=new int*[m];
+for(int i=0;i<m;i++)
+    p[i]=new int[n];
+用完后
+for(int i=0;i<m;i++) delete[] p[i];
+delete[] p;
+3、标准模板库： 
+#include<vector>
+using std::vector;
+vector< vector<int> > p;
+p.resize(m);
+for(int i=0; i<m; i++) p[i].resize(n);
+用完后自动释放
+
+三种方式都可以用p[i][j]来访问数组元素。
